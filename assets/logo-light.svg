@@ -1,0 +1,102 @@
+<svg viewBox="0 0 954 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="QuDisclose — an astronaut quokka holding up a report with a verified seal (coordinated vulnerability disclosure between machines)">
+<style>
+/* Motion of the qugit mark, as approved in the 2026-11-07 mockup: the source of truth for the
+   animation (classes referenced by the SVGs in this folder). Everything sits behind
+   prefers-reduced-motion: no-preference; with reduced motion the mark is a still. */
+
+@media (prefers-reduced-motion: no-preference) {
+  .qm-flow { animation: qm-flow 1.6s linear infinite; }
+  .qm-beacon { animation: qm-beacon 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .qm-bob { animation: qm-bob 5s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 90%; }
+  .qm-eyes { animation: qm-blink 5.4s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 50%; }
+}
+
+@keyframes qm-flow { to { stroke-dashoffset: -14; } }
+
+@keyframes qm-beacon { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 0.9; transform: scale(1.2); } }
+
+@keyframes qm-bob { 0%, 100% { transform: translateY(0) rotate(-0.4deg); } 50% { transform: translateY(-3px) rotate(0.4deg); } }
+
+@keyframes qm-blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.08); } }
+
+@media (prefers-reduced-motion: no-preference) {
+  .qm-float { animation: qm-float 3.6s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 60%; }
+  .qm-flame { animation: qm-flame 0.5s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 50% 0; }
+}
+
+@keyframes qm-float { 0%,100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-6px) rotate(1deg); } }
+
+@keyframes qm-flame { from { transform: scaleY(0.7); opacity: .7; } to { transform: scaleY(1.15); opacity: 1; } }
+
+@media (prefers-reduced-motion: no-preference) {
+  .qm-ring { animation: qm-ring 1.8s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+  .qm-ring2 { animation: qm-ring 1.8s ease-out .4s infinite; transform-box: fill-box; transform-origin: center; }
+  .qm-swing { animation: qm-swing 3.2s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 0; }
+  .qm-glint { animation: qm-glint 2.8s ease-in-out infinite; }
+  .qm-led { animation: qm-led 1.6s steps(1) infinite; }
+  .qm-led2 { animation: qm-led 1.6s steps(1) .53s infinite; }
+  .qm-led3 { animation: qm-led 1.6s steps(1) 1.06s infinite; }
+}
+@keyframes qm-ring { 0% { opacity: .9; transform: scale(.8); } 100% { opacity: 0; transform: scale(1.35); } }
+@keyframes qm-swing { 0%,100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+@keyframes qm-glint { 0%,70%,100% { opacity: .25; } 80% { opacity: .9; } }
+@keyframes qm-led { 0%,33% { opacity: 1; } 34%,100% { opacity: .25; } }
+</style>
+<g transform="translate(34,18)"><g class="qm-float">
+<g transform="translate(-26,0)">
+        <!-- pack: two tanks behind the left shoulder -->
+        <rect x="56" y="128" width="26" height="78" rx="13" fill="#c9ced8" stroke="#9aa2b1" stroke-width="2"></rect>
+        <rect x="80" y="122" width="26" height="84" rx="13" fill="#c9ced8" stroke="#9aa2b1" stroke-width="2"></rect>
+        <rect x="63" y="206" width="12" height="7" rx="2" fill="#9aa2b1"></rect><rect x="87" y="206" width="12" height="7" rx="2" fill="#9aa2b1"></rect>
+        <path class="qm-flame" d="M69 213 q-6 12 0 20 q6 -8 0 -20z" fill="#fab219"></path><path class="qm-flame" style="animation-delay:.2s" d="M93 213 q-6 12 0 20 q6 -8 0 -20z" fill="#fab219"></path>
+        <!-- feet -->
+        <ellipse cx="118" cy="250" rx="26" ry="15" fill="#7c5ceb"></ellipse><ellipse cx="182" cy="252" rx="26" ry="15" fill="#7c5ceb"></ellipse>
+        <!-- body + belly -->
+        <ellipse cx="150" cy="178" rx="78" ry="82" fill="#8c7ff2"></ellipse>
+        <ellipse cx="150" cy="192" rx="52" ry="60" fill="#d6d1fb"></ellipse>
+        <!-- left arm: from the shoulder, resting on the belly -->
+        
+      <path d="M92 168 C84 190, 94 212, 112 222" fill="none" stroke="#7c5ceb" stroke-width="26" stroke-linecap="round"></path>
+      <circle cx="116" cy="224" r="14" fill="#7c5ceb"></circle>
+      <path d="M112 233 q4 4 8 0 M120 232 q3 3 7 -1" fill="none" stroke="#6d4de0" stroke-width="2" stroke-linecap="round" opacity="0.8"></path>
+        <!-- ears -->
+        <ellipse cx="106" cy="70" rx="24" ry="28" fill="#8c7ff2" transform="rotate(-12 106 70)"></ellipse><ellipse cx="106" cy="72" rx="12" ry="15" fill="#b05ef1" transform="rotate(-12 106 72)"></ellipse>
+        <ellipse cx="194" cy="70" rx="24" ry="28" fill="#8c7ff2" transform="rotate(12 194 70)"></ellipse><ellipse cx="194" cy="72" rx="12" ry="15" fill="#b05ef1" transform="rotate(12 194 72)"></ellipse>
+        <!-- head -->
+        <ellipse cx="150" cy="112" rx="62" ry="58" fill="#8c7ff2"></ellipse><ellipse cx="150" cy="132" rx="34" ry="28" fill="#d6d1fb"></ellipse>
+        <circle cx="112" cy="128" r="11" fill="#cb94f6" opacity="0.6"></circle><circle cx="188" cy="128" r="11" fill="#cb94f6" opacity="0.6"></circle>
+        <g class="qm-eyes"><ellipse cx="128" cy="106" rx="8" ry="10" fill="#1a1a24"></ellipse><ellipse cx="172" cy="106" rx="8" ry="10" fill="#1a1a24"></ellipse>
+          <circle cx="131" cy="102" r="2.6" fill="#ffffff"></circle><circle cx="175" cy="102" r="2.6" fill="#ffffff"></circle></g>
+        <path d="M150 120 l8 8 a6 6 0 0 1 -16 0 z" fill="#3c27cf"></path>
+        <path d="M126 134 Q150 160 174 134" fill="none" stroke="#3c27cf" stroke-width="4.5" stroke-linecap="round"></path>
+        <path d="M138 144 Q150 152 162 144" fill="#b05ef1"></path>
+        <!-- helmet: glass, rim, shine; collar under its base; antenna-star -->
+        <circle cx="150" cy="110" r="82" fill="#a5b4fc" fill-opacity="0.12" stroke="#6f74a8" stroke-width="3"></circle>
+        <path d="M96 58 q20 -26 50 -30" fill="none" stroke="#ffffff" stroke-opacity="0.6" stroke-width="5" stroke-linecap="round"></path>
+        <path d="M90 172 q60 30 120 0" fill="none" stroke="#c9ced8" stroke-width="10" stroke-linecap="round"></path>
+        <path d="M90 172 q60 30 120 0" fill="none" stroke="#9aa2b1" stroke-width="2" stroke-linecap="round" opacity="0.7" transform="translate(0,5)"></path>
+        <path d="M150 28 v-16" stroke="#6f74a8" stroke-width="3" stroke-linecap="round"></path>
+        <path d="M150 2 l3 7 7 1 -5 5 1 7 -6 -3 -6 3 1 -7 -5 -5 7 -1z" fill="#facc15"></path>
+      </g>
+    <!-- a report, disclosed: the page, its findings, and the seal that says it was verified -->
+    <g class="qm-bob">
+      <rect x="220" y="44" width="68" height="88" rx="9" fill="#ffffff" stroke="#9aa2b1" stroke-width="2.5"/>
+      <rect x="231" y="58" width="30" height="7" rx="3.5" fill="#5f4ddd"/>
+      <rect x="231" y="74" width="46" height="5" rx="2.5" fill="#c9ced8"/>
+      <rect x="231" y="86" width="46" height="5" rx="2.5" fill="#c9ced8"/>
+      <rect x="231" y="98" width="28" height="5" rx="2.5" fill="#c9ced8"/>
+      <circle class="qm-ring" cx="284" cy="124" r="24" fill="none" stroke="#8c7ff2" stroke-width="2"/>
+      <path d="M284 98 l20 7 v16 c0 13 -8.500 21 -20 26 c-11.500 -5 -20 -13 -20 -26 v-16 z" fill="#5f4ddd" stroke="#ffffff" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M274 122 l7 7 l13 -14" fill="none" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle class="qm-beacon" cx="288" cy="46" r="7" fill="#facc15"/>
+      <circle cx="288" cy="46" r="4.5" fill="#facc15"/>
+    </g>
+    <!-- right arm, raised to hold it -->
+    <g transform="translate(-26,0)">
+      <path d="M208 170 C226 178, 246 172, 256 156" fill="none" stroke="#7c5ceb" stroke-width="26" stroke-linecap="round"></path>
+      <circle cx="258" cy="152" r="14" fill="#7c5ceb"></circle>
+      <path d="M252 144 q3 -4 7 -1 M260 143 q4 -2 6 2" fill="none" stroke="#6d4de0" stroke-width="2" stroke-linecap="round" opacity="0.8"></path></g>
+</g></g>
+<g transform="translate(344,86)"><svg width="120" height="108" viewBox="0 0 400 361"><g fill="#8c7ff2"><path d="M39.789 106.742 C 39.242 106.961,37.489 110.361,35.392 115.269 C 30.157 127.523,26.405 141.203,24.382 155.415 C 22.738 166.962,22.741 184.992,24.388 196.209 C 26.507 210.638,29.356 221.445,34.285 233.755 C 54.755 284.874,101.994 321.718,156.679 329.215 C 166.224 330.524,164.622 330.505,269.675 330.505 L 372.383 330.505 372.264 327.076 C 371.190 295.941,347.945 268.446,316.968 261.670 C 309.916 260.128,312.499 260.185,237.906 259.937 C 188.077 259.771,166.484 259.583,165.343 259.302 C 164.449 259.083,162.662 258.708,161.372 258.470 C 114.940 249.906,84.692 202.391,95.997 155.776 C 100.451 137.410,113.982 117.189,127.858 108.164 C 130.530 106.426,132.384 106.496,84.736 106.527 C 60.270 106.542,40.044 106.639,39.789 106.742 "></path><path d="M166.245 21.535 C 160.900 21.846,149.066 23.718,142.238 25.332 C 112.220 32.427,84.664 48.546,63.964 71.119 C 58.144 77.465,48.375 90.142,48.375 91.348 C 48.375 91.571,72.014 91.697,113.879 91.697 C 185.723 91.697,185.570 91.693,196.029 93.841 C 209.995 96.710,225.908 105.441,236.611 116.106 C 273.130 152.499,268.913 212.802,227.708 243.435 C 226.963 243.988,226.354 244.595,226.354 244.784 C 226.354 244.998,243.120 245.126,271.128 245.126 L 315.902 245.126 316.220 244.314 C 316.394 243.867,317.223 242.040,318.062 240.253 C 356.824 157.635,313.085 57.834,225.451 28.940 C 218.184 26.543,207.938 24.099,200.181 22.911 C 191.504 21.582,176.137 20.959,166.245 21.535 "></path><path fill-opacity="0" d="m 188.448,21.671 c 6.329,0.474 10.903,1.025 14.982,1.807 7.349,1.409 9.953,1.984 14.079,3.11 92.365,25.201 140.744,128.002 100.553,213.665 -0.839,1.787 -1.668,3.614 -1.842,4.061 l -0.318,0.812 h -44.774 c -28.008,0 -44.774,-0.128 -44.774,-0.342 0,-0.189 0.609,-0.796 1.354,-1.349 41.205,-30.633 45.422,-90.936 8.903,-127.329 -10.703,-10.665 -26.616,-19.396 -40.582,-22.265 -10.459,-2.148 -10.306,-2.144 -82.15,-2.144 -41.865,0 -65.504,-0.126 -65.504,-0.349 0,-0.541 4.825,-7.326 8.481,-11.926 10.294,-12.95 21.527,-23.184 35.955,-32.757 20.231,-13.422 42.498,-21.427 68.561,-24.646 5.836,-0.721 19.708,-0.899 27.076,-0.348 m -59.428,85.347 c -0.11,0.286 -0.633,0.802 -1.162,1.146 -13.876,9.025 -27.407,29.246 -31.861,47.612 -11.305,46.615 18.943,94.13 65.375,102.694 1.29,0.238 3.077,0.613 3.971,0.832 1.141,0.281 22.734,0.469 72.563,0.635 74.593,0.248 72.01,0.191 79.062,1.733 30.977,6.776 54.222,34.271 55.296,65.406 l 0.119,3.429 H 269.675 c -105.053,0 -103.451,0.019 -112.996,-1.29 -54.685,-7.497 -101.924,-44.341 -122.394,-95.46 -4.929,-12.31 -7.778,-23.117 -9.897,-37.546 -1.647,-11.217 -1.65,-29.247 -0.006,-40.794 2.023,-14.212 5.775,-27.892 11.01,-40.146 2.097,-4.908 3.85,-8.308 4.397,-8.527 1.276,-0.513 89.429,-0.24 89.231,0.276"></path></g></svg>
+<!-- "uDisclose": outlined from Geist (weight 600, 104px, letter-spacing -2), origin at x=104 y=92; never live text -->
+<path transform="translate(104,92)" d="M25.584 1.248Q17.118 1.248 12.22 -4.316Q7.322 -9.88 7.322 -19.781V-55.536H20.634V-23.046Q20.634 -16.079 22.932 -12.823Q25.231 -9.568 30.035 -9.568Q35.422 -9.568 38.418 -13.156Q41.413 -16.744 41.413 -23.587V-55.536H54.725V0H42.494L42.203 -15.246L43.93 -14.727Q42.598 -6.885 37.918 -2.818Q33.238 1.248 25.584 1.248ZM68.408 0V-73.84H92.994Q110.674 -73.84 120.19 -64.22Q129.706 -54.6 129.706 -36.816Q129.706 -19.136 120.346 -9.568Q110.986 0 93.618 0ZM81.928 -11.773H92.994Q104.496 -11.773 110.112 -17.982Q115.728 -24.19 115.728 -36.858Q115.728 -49.65 110.112 -55.858Q104.496 -62.067 92.994 -62.067H81.928ZM139.042 0V-55.536H152.354V0ZM138.792 -62.962V-74.734H152.603V-62.962ZM187.586 1.248Q179.078 1.248 173.514 -1.165Q167.95 -3.578 165.07 -7.81Q162.189 -12.043 161.773 -17.493L175.376 -18.075Q176.125 -13.749 178.902 -11.326Q181.679 -8.903 187.627 -8.903Q192.286 -8.903 194.772 -10.431Q197.258 -11.96 197.258 -15.184Q197.258 -17.077 196.374 -18.325Q195.49 -19.573 192.931 -20.519Q190.373 -21.466 185.422 -22.339Q177.019 -23.837 172.256 -25.979Q167.493 -28.122 165.558 -31.346Q163.624 -34.57 163.624 -39.27Q163.624 -47.07 169.604 -51.927Q175.584 -56.784 187.149 -56.784Q195.178 -56.784 200.305 -54.257Q205.432 -51.73 208.074 -47.486Q210.715 -43.243 211.152 -38.106L197.674 -37.482Q197.549 -40.082 196.384 -42.162Q195.219 -44.242 192.931 -45.438Q190.643 -46.634 186.941 -46.634Q182.219 -46.634 179.807 -44.741Q177.394 -42.848 177.394 -39.77Q177.394 -37.523 178.361 -36.078Q179.328 -34.632 181.731 -33.727Q184.133 -32.822 188.251 -32.157Q196.821 -30.888 201.813 -28.725Q206.805 -26.562 208.916 -23.286Q211.027 -20.01 211.027 -15.35Q211.027 -7.384 204.652 -3.068Q198.277 1.248 187.586 1.248ZM244.595 1.248Q236.317 1.248 230.191 -2.33Q224.066 -5.907 220.675 -12.449Q217.285 -18.99 217.285 -27.768Q217.285 -36.546 220.675 -43.035Q224.066 -49.525 230.191 -53.154Q236.317 -56.784 244.595 -56.784Q251.647 -56.784 257.19 -54.298Q262.733 -51.813 266.207 -47.154Q269.68 -42.494 270.533 -35.859L256.763 -35.152Q255.952 -40.456 252.686 -43.212Q249.421 -45.968 244.595 -45.968Q238.168 -45.968 234.611 -41.153Q231.055 -36.338 231.055 -27.768Q231.055 -19.157 234.611 -14.342Q238.168 -9.527 244.595 -9.527Q249.462 -9.527 252.749 -12.376Q256.035 -15.226 256.763 -21.091L270.533 -20.467Q269.722 -13.832 266.29 -8.954Q262.858 -4.077 257.315 -1.414Q251.771 1.248 244.595 1.248ZM292.162 0Q286.046 0 282.448 -3.12Q278.85 -6.24 278.85 -13.146V-73.84H292.162V-14.498Q292.162 -12.335 293.233 -11.326Q294.304 -10.317 296.301 -10.317H300.378V0ZM331.803 1.248Q323.587 1.248 317.43 -2.33Q311.274 -5.907 307.883 -12.449Q304.493 -18.99 304.493 -27.768Q304.493 -36.608 307.883 -43.098Q311.274 -49.587 317.43 -53.186Q323.587 -56.784 331.803 -56.784Q340.019 -56.784 346.145 -53.186Q352.271 -49.587 355.661 -43.098Q359.051 -36.608 359.051 -27.768Q359.051 -18.99 355.661 -12.449Q352.271 -5.907 346.145 -2.33Q340.019 1.248 331.803 1.248ZM331.803 -9.527Q338.23 -9.527 341.756 -14.342Q345.282 -19.157 345.282 -27.768Q345.282 -36.338 341.756 -41.174Q338.23 -46.009 331.803 -46.009Q325.376 -46.009 321.819 -41.174Q318.263 -36.338 318.263 -27.768Q318.263 -19.157 321.819 -14.342Q325.376 -9.527 331.803 -9.527ZM391.018 1.248Q382.51 1.248 376.946 -1.165Q371.382 -3.578 368.502 -7.81Q365.621 -12.043 365.205 -17.493L378.808 -18.075Q379.557 -13.749 382.334 -11.326Q385.111 -8.903 391.059 -8.903Q395.718 -8.903 398.204 -10.431Q400.69 -11.96 400.69 -15.184Q400.69 -17.077 399.806 -18.325Q398.922 -19.573 396.363 -20.519Q393.805 -21.466 388.854 -22.339Q380.451 -23.837 375.688 -25.979Q370.925 -28.122 368.99 -31.346Q367.056 -34.57 367.056 -39.27Q367.056 -47.07 373.036 -51.927Q379.016 -56.784 390.581 -56.784Q398.61 -56.784 403.737 -54.257Q408.864 -51.73 411.506 -47.486Q414.147 -43.243 414.584 -38.106L401.106 -37.482Q400.981 -40.082 399.816 -42.162Q398.651 -44.242 396.363 -45.438Q394.075 -46.634 390.373 -46.634Q385.651 -46.634 383.239 -44.741Q380.826 -42.848 380.826 -39.77Q380.826 -37.523 381.793 -36.078Q382.76 -34.632 385.163 -33.727Q387.565 -32.822 391.683 -32.157Q400.253 -30.888 405.245 -28.725Q410.237 -26.562 412.348 -23.286Q414.459 -20.01 414.459 -15.35Q414.459 -7.384 408.084 -3.068Q401.709 1.248 391.018 1.248ZM447.902 1.248Q439.603 1.248 433.498 -2.33Q427.394 -5.907 424.055 -12.449Q420.717 -18.99 420.717 -27.768Q420.717 -36.546 424.055 -43.035Q427.394 -49.525 433.436 -53.154Q439.478 -56.784 447.653 -56.784Q455.578 -56.784 461.527 -53.238Q467.475 -49.691 470.731 -43.035Q473.986 -36.379 473.986 -27.04V-24.066H434.528Q434.923 -16.723 438.511 -13.062Q442.099 -9.402 448.069 -9.402Q452.52 -9.402 455.463 -11.388Q458.406 -13.374 459.592 -17.035L473.195 -16.182Q470.97 -8.133 464.241 -3.442Q457.512 1.248 447.902 1.248ZM434.528 -33.01H460.174Q459.758 -39.77 456.358 -43.035Q452.957 -46.301 447.653 -46.301Q442.307 -46.301 438.823 -42.879Q435.339 -39.458 434.528 -33.01Z" fill="#1a1a24"/></g></svg>

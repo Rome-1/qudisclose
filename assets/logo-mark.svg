@@ -1,0 +1,100 @@
+<svg viewBox="0 0 372 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="QuDisclose — an astronaut quokka holding up a report with a verified seal (coordinated vulnerability disclosure between machines)">
+<style>
+/* Motion of the qugit mark, as approved in the 2026-11-07 mockup: the source of truth for the
+   animation (classes referenced by the SVGs in this folder). Everything sits behind
+   prefers-reduced-motion: no-preference; with reduced motion the mark is a still. */
+
+@media (prefers-reduced-motion: no-preference) {
+  .qm-flow { animation: qm-flow 1.6s linear infinite; }
+  .qm-beacon { animation: qm-beacon 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .qm-bob { animation: qm-bob 5s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 90%; }
+  .qm-eyes { animation: qm-blink 5.4s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 50%; }
+}
+
+@keyframes qm-flow { to { stroke-dashoffset: -14; } }
+
+@keyframes qm-beacon { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 0.9; transform: scale(1.2); } }
+
+@keyframes qm-bob { 0%, 100% { transform: translateY(0) rotate(-0.4deg); } 50% { transform: translateY(-3px) rotate(0.4deg); } }
+
+@keyframes qm-blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.08); } }
+
+@media (prefers-reduced-motion: no-preference) {
+  .qm-float { animation: qm-float 3.6s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 60%; }
+  .qm-flame { animation: qm-flame 0.5s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 50% 0; }
+}
+
+@keyframes qm-float { 0%,100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-6px) rotate(1deg); } }
+
+@keyframes qm-flame { from { transform: scaleY(0.7); opacity: .7; } to { transform: scaleY(1.15); opacity: 1; } }
+
+@media (prefers-reduced-motion: no-preference) {
+  .qm-ring { animation: qm-ring 1.8s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+  .qm-ring2 { animation: qm-ring 1.8s ease-out .4s infinite; transform-box: fill-box; transform-origin: center; }
+  .qm-swing { animation: qm-swing 3.2s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 0; }
+  .qm-glint { animation: qm-glint 2.8s ease-in-out infinite; }
+  .qm-led { animation: qm-led 1.6s steps(1) infinite; }
+  .qm-led2 { animation: qm-led 1.6s steps(1) .53s infinite; }
+  .qm-led3 { animation: qm-led 1.6s steps(1) 1.06s infinite; }
+}
+@keyframes qm-ring { 0% { opacity: .9; transform: scale(.8); } 100% { opacity: 0; transform: scale(1.35); } }
+@keyframes qm-swing { 0%,100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+@keyframes qm-glint { 0%,70%,100% { opacity: .25; } 80% { opacity: .9; } }
+@keyframes qm-led { 0%,33% { opacity: 1; } 34%,100% { opacity: .25; } }
+</style>
+<g transform="translate(34,18)"><g class="qm-float">
+<g transform="translate(-26,0)">
+        <!-- pack: two tanks behind the left shoulder -->
+        <rect x="56" y="128" width="26" height="78" rx="13" fill="#c9ced8" stroke="#9aa2b1" stroke-width="2"></rect>
+        <rect x="80" y="122" width="26" height="84" rx="13" fill="#c9ced8" stroke="#9aa2b1" stroke-width="2"></rect>
+        <rect x="63" y="206" width="12" height="7" rx="2" fill="#9aa2b1"></rect><rect x="87" y="206" width="12" height="7" rx="2" fill="#9aa2b1"></rect>
+        <path class="qm-flame" d="M69 213 q-6 12 0 20 q6 -8 0 -20z" fill="#fab219"></path><path class="qm-flame" style="animation-delay:.2s" d="M93 213 q-6 12 0 20 q6 -8 0 -20z" fill="#fab219"></path>
+        <!-- feet -->
+        <ellipse cx="118" cy="250" rx="26" ry="15" fill="#7c5ceb"></ellipse><ellipse cx="182" cy="252" rx="26" ry="15" fill="#7c5ceb"></ellipse>
+        <!-- body + belly -->
+        <ellipse cx="150" cy="178" rx="78" ry="82" fill="#8c7ff2"></ellipse>
+        <ellipse cx="150" cy="192" rx="52" ry="60" fill="#d6d1fb"></ellipse>
+        <!-- left arm: from the shoulder, resting on the belly -->
+        
+      <path d="M92 168 C84 190, 94 212, 112 222" fill="none" stroke="#7c5ceb" stroke-width="26" stroke-linecap="round"></path>
+      <circle cx="116" cy="224" r="14" fill="#7c5ceb"></circle>
+      <path d="M112 233 q4 4 8 0 M120 232 q3 3 7 -1" fill="none" stroke="#6d4de0" stroke-width="2" stroke-linecap="round" opacity="0.8"></path>
+        <!-- ears -->
+        <ellipse cx="106" cy="70" rx="24" ry="28" fill="#8c7ff2" transform="rotate(-12 106 70)"></ellipse><ellipse cx="106" cy="72" rx="12" ry="15" fill="#b05ef1" transform="rotate(-12 106 72)"></ellipse>
+        <ellipse cx="194" cy="70" rx="24" ry="28" fill="#8c7ff2" transform="rotate(12 194 70)"></ellipse><ellipse cx="194" cy="72" rx="12" ry="15" fill="#b05ef1" transform="rotate(12 194 72)"></ellipse>
+        <!-- head -->
+        <ellipse cx="150" cy="112" rx="62" ry="58" fill="#8c7ff2"></ellipse><ellipse cx="150" cy="132" rx="34" ry="28" fill="#d6d1fb"></ellipse>
+        <circle cx="112" cy="128" r="11" fill="#cb94f6" opacity="0.6"></circle><circle cx="188" cy="128" r="11" fill="#cb94f6" opacity="0.6"></circle>
+        <g class="qm-eyes"><ellipse cx="128" cy="106" rx="8" ry="10" fill="#1a1a24"></ellipse><ellipse cx="172" cy="106" rx="8" ry="10" fill="#1a1a24"></ellipse>
+          <circle cx="131" cy="102" r="2.6" fill="#ffffff"></circle><circle cx="175" cy="102" r="2.6" fill="#ffffff"></circle></g>
+        <path d="M150 120 l8 8 a6 6 0 0 1 -16 0 z" fill="#3c27cf"></path>
+        <path d="M126 134 Q150 160 174 134" fill="none" stroke="#3c27cf" stroke-width="4.5" stroke-linecap="round"></path>
+        <path d="M138 144 Q150 152 162 144" fill="#b05ef1"></path>
+        <!-- helmet: glass, rim, shine; collar under its base; antenna-star -->
+        <circle cx="150" cy="110" r="82" fill="#a5b4fc" fill-opacity="0.12" stroke="#6f74a8" stroke-width="3"></circle>
+        <path d="M96 58 q20 -26 50 -30" fill="none" stroke="#ffffff" stroke-opacity="0.6" stroke-width="5" stroke-linecap="round"></path>
+        <path d="M90 172 q60 30 120 0" fill="none" stroke="#c9ced8" stroke-width="10" stroke-linecap="round"></path>
+        <path d="M90 172 q60 30 120 0" fill="none" stroke="#9aa2b1" stroke-width="2" stroke-linecap="round" opacity="0.7" transform="translate(0,5)"></path>
+        <path d="M150 28 v-16" stroke="#6f74a8" stroke-width="3" stroke-linecap="round"></path>
+        <path d="M150 2 l3 7 7 1 -5 5 1 7 -6 -3 -6 3 1 -7 -5 -5 7 -1z" fill="#facc15"></path>
+      </g>
+    <!-- a report, disclosed: the page, its findings, and the seal that says it was verified -->
+    <g class="qm-bob">
+      <rect x="220" y="44" width="68" height="88" rx="9" fill="#ffffff" stroke="#9aa2b1" stroke-width="2.5"/>
+      <rect x="231" y="58" width="30" height="7" rx="3.5" fill="#5f4ddd"/>
+      <rect x="231" y="74" width="46" height="5" rx="2.5" fill="#c9ced8"/>
+      <rect x="231" y="86" width="46" height="5" rx="2.5" fill="#c9ced8"/>
+      <rect x="231" y="98" width="28" height="5" rx="2.5" fill="#c9ced8"/>
+      <circle class="qm-ring" cx="284" cy="124" r="24" fill="none" stroke="#8c7ff2" stroke-width="2"/>
+      <path d="M284 98 l20 7 v16 c0 13 -8.500 21 -20 26 c-11.500 -5 -20 -13 -20 -26 v-16 z" fill="#5f4ddd" stroke="#ffffff" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M274 122 l7 7 l13 -14" fill="none" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle class="qm-beacon" cx="288" cy="46" r="7" fill="#facc15"/>
+      <circle cx="288" cy="46" r="4.5" fill="#facc15"/>
+    </g>
+    <!-- right arm, raised to hold it -->
+    <g transform="translate(-26,0)">
+      <path d="M208 170 C226 178, 246 172, 256 156" fill="none" stroke="#7c5ceb" stroke-width="26" stroke-linecap="round"></path>
+      <circle cx="258" cy="152" r="14" fill="#7c5ceb"></circle>
+      <path d="M252 144 q3 -4 7 -1 M260 143 q4 -2 6 2" fill="none" stroke="#6d4de0" stroke-width="2" stroke-linecap="round" opacity="0.8"></path></g>
+</g></g>
+</svg>

@@ -1,0 +1,43 @@
+[project]
+name = "qudisclose"
+version = "0.1.0"
+description = "Machine-to-machine coordinated vulnerability disclosure over MCP, with a multi-agent triage/patch/postmortem team for open-source maintainers."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { file = "LICENSE" }
+classifiers = ["License :: OSI Approved :: Apache Software License", "Private :: Do Not Upload"]
+dependencies = [
+    "mcp>=2.3,<3",
+    "anthropic>=2.3,<3",
+    "pydantic>=2.11",
+    "cryptography>=45",
+    "PyJWT[crypto]>=2.10",
+    "httpx2>=2.0",
+    "uvicorn>=0.35",
+    "starlette>=0.47",
+    "psycopg[binary]>=3.2",
+    "jsonschema>=4.20",
+]
+
+[project.scripts]
+qudisclose = "qudisclose.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-asyncio>=0.25"]
+hunter = ["openai>=1.60"]
+quome = ["quome @ git+https://github.com/quome-cloud/quome-sdk-python"]  # sandbox.backend = "quome"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/qudisclose"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning"]

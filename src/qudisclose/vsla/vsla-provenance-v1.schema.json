@@ -1,0 +1,353 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vsla.dev/provenance/v1/schema.json",
+  "title": "VSLA provenance predicate v1",
+  "description": "Predicate for in-toto Statements with predicateType https://vsla.dev/provenance/v1. L1 fields are required; L2 and L3 sections are optional and their absence fails the corresponding verification checks. The receipt, ledger entry and weight attestation are separate DSSE envelopes whose bodies are defined under $defs.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "vslaVersion",
+    "track",
+    "claimedLevel",
+    "finder",
+    "authorization",
+    "mbom",
+    "transcript",
+    "reproduction",
+    "injection",
+    "timestamps"
+  ],
+  "properties": {
+    "vslaVersion": { "const": "1.0" },
+    "track": { "enum": ["finding", "patch"] },
+    "claimedLevel": { "type": "integer", "minimum": 1, "maximum": 3 },
+    "profile": {
+      "description": "published: plaintext paths and commands. embargoed: those fields are digests (commandDigest, filesTouchedDigest, no test.path) so the statement reveals nothing about the bug while the case is open.",
+      "enum": ["published", "embargoed"],
+      "default": "published"
+    },
+    "finder": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identity", "publicKey", "operator", "harness"],
+      "properties": {
+        "identity": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "publicKey": { "$ref": "#/$defs/ed25519" },
+        "operator": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "harness": { "$ref": "#/$defs/versioned" }
+      }
+    },
+    "authorization": {
+      "description": "The basis on which the finder was entitled to test this codebase (VSLA-F-19). VSLA records it; it cannot enforce it.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["basis"],
+      "properties": {
+        "basis": { "enum": ["ownership", "program", "engagement", "safe-harbour"] },
+        "ref": { "type": "string", "maxLength": 500, "description": "program scope URL, engagement id, or policy URL" }
+      }
+    },
+    "mbom": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["models"],
+      "properties": {
+        "models": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["role", "provider", "name", "serving"],
+            "properties": {
+              "role": { "type": "string" },
+              "provider": { "type": "string" },
+              "name": { "type": "string" },
+              "version": { "type": "string" },
+              "family": { "type": "string", "description": "model family, used to judge reviewer/patcher diversity (VSLA-P-10)" },
+              "serving": { "enum": ["api", "self-hosted", "tee"] },
+              "weights": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "digest": { "$ref": "#/$defs/digestSet" },
+                  "unmeasured": { "const": true, "description": "the operator serves these weights but did not hash the loaded bytes; caps Environment at L1" },
+                  "quantization": { "type": "string" },
+                  "attestation": { "$ref": "#/$defs/envelope", "description": "provider-signed DSSE (application/vnd.vsla.weights-attestation+json) over the base weights" }
+                },
+                "anyOf": [ { "required": ["digest"] }, { "required": ["unmeasured"] } ]
+              },
+              "scan": { "$ref": "#/$defs/ref" }
+            }
+          }
+        },
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": { "name": { "type": "string" }, "digest": { "$ref": "#/$defs/digestSet" } }
+          }
+        }
+      }
+    },
+    "transcript": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "root", "leafCount"],
+      "properties": {
+        "algorithm": { "const": "rfc6962-sha256" },
+        "root": { "$ref": "#/$defs/hex64" },
+        "leafCount": { "type": "integer", "minimum": 2 },
+        "firstLeaf": { "type": "object" },
+        "leaves": { "type": "array", "items": { "type": "object" } },
+        "sealedTo": { "$ref": "#/$defs/ed25519", "description": "X25519 key derived from this Ed25519 key; bodies sealed with HPKE (RFC 9180) base mode" }
+      }
+    },
+    "reproduction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["test", "expectedExit", "observedExit", "securityFailure", "revision", "executor", "sandbox", "outputDigest", "startedAt", "finishedAt"],
+      "properties": {
+        "test": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["digest"],
+          "properties": { "path": { "type": "string" }, "digest": { "$ref": "#/$defs/digestSet" } }
+        },
+        "command": { "type": "string", "description": "published profile" },
+        "commandDigest": { "$ref": "#/$defs/digestSet", "description": "embargoed profile: sha256 of the command string" },
+        "expectedExit": { "type": "integer" },
+        "observedExit": { "type": "integer" },
+        "securityFailure": { "type": "boolean", "description": "per the normative classifier in VSLA-F-5: at least one collected test failed by assertion; no collection, import, fixture or timeout errors" },
+        "revision": { "type": "string", "pattern": "^[0-9a-f]{7,40}$" },
+        "executor": { "const": "code" },
+        "sandbox": {
+          "type": "object",
+          "required": ["backend", "isolation"],
+          "properties": {
+            "backend": { "type": "string" },
+            "isolation": { "enum": ["vm", "container", "process"] },
+            "digest": { "$ref": "#/$defs/digestSet" }
+          }
+        },
+        "outputDigest": { "$ref": "#/$defs/digestSet" },
+        "startedAt": { "type": "string", "format": "date-time" },
+        "finishedAt": { "type": "string", "format": "date-time" }
+      },
+      "oneOf": [ { "required": ["command"] }, { "required": ["commandDigest"] } ]
+    },
+    "patch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["diffDigest", "applied", "reproductionPasses", "suitePasses", "attempts", "scope"],
+      "properties": {
+        "diffDigest": { "$ref": "#/$defs/digestSet" },
+        "filesTouched": { "type": "array", "items": { "type": "string" }, "description": "published profile" },
+        "filesTouchedDigest": { "$ref": "#/$defs/digestSet", "description": "embargoed profile: sha256 over the canonical sorted list" },
+        "scope": { "enum": ["source-only", "mixed"], "description": "mixed = touches build, CI, fixtures, binaries, manifests or release tooling; caps the Patch track at L1 (VSLA-F-18)" },
+        "applied": { "type": "boolean" },
+        "reproductionPasses": { "type": "boolean" },
+        "suitePasses": { "type": "boolean" },
+        "attempts": { "type": "integer", "minimum": 1 },
+        "review": {
+          "description": "the finder's own review, informational; L2 requires the receiver's review in the receipt",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["approved", "reviewerRole", "verdictDigest"],
+          "properties": {
+            "approved": { "type": "boolean" },
+            "reviewerRole": { "type": "string" },
+            "reviewerFamily": { "type": "string" },
+            "verdictDigest": { "$ref": "#/$defs/digestSet" }
+          }
+        }
+      },
+      "oneOf": [ { "required": ["filesTouched"] }, { "required": ["filesTouchedDigest"] } ]
+    },
+    "injection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scannerFlags", "modelFlagged"],
+      "properties": {
+        "scannerFlags": { "type": "array", "items": { "type": "string" } },
+        "modelFlagged": { "type": "boolean" }
+      }
+    },
+    "channel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["intake", "intakeKey", "declaredIn"],
+      "properties": {
+        "intake": { "type": "string", "format": "uri" },
+        "intakeKey": { "$ref": "#/$defs/ed25519" },
+        "declaredIn": { "enum": ["SECURITY.md", "security.txt", "registry", "policy"] }
+      }
+    },
+    "history": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ledger", "root", "entries", "accepted", "rejected", "countersigners", "score", "floor"],
+      "properties": {
+        "ledger": { "type": "string" },
+        "root": { "$ref": "#/$defs/hex64" },
+        "entries": { "type": "integer", "minimum": 0 },
+        "accepted": { "type": "integer", "minimum": 0 },
+        "rejected": { "type": "integer", "minimum": 0 },
+        "countersigners": { "type": "integer", "minimum": 0 },
+        "score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "floor": { "type": "number", "minimum": 0, "maximum": 1 },
+        "oldestAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "measurement", "measures", "rootOfTrust", "enclaveKey"],
+      "properties": {
+        "type": { "enum": ["sev-snp", "tdx", "nitro", "two-operator", "signed-quote", "none"] },
+        "measurement": {
+          "type": "object",
+          "required": ["algorithm", "value"],
+          "properties": { "algorithm": { "type": "string" }, "value": { "type": "string" } }
+        },
+        "measures": { "type": "array", "items": { "enum": ["weights", "harness", "policy", "sandbox", "signingKey"] } },
+        "enclaveKey": { "$ref": "#/$defs/ed25519", "description": "the statement-signing key the quote binds; a verifier derives it from the quote, never from a keyring" },
+        "quote": { "type": "string" },
+        "rootOfTrust": { "type": "string" },
+        "coSigners": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "timestamps": {
+      "type": "object",
+      "required": ["startedAt", "finishedAt"],
+      "properties": {
+        "startedAt": { "type": "string", "format": "date-time" },
+        "finishedAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  },
+  "$defs": {
+    "hex64": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "ed25519": { "type": "string", "pattern": "^ed25519:[0-9a-f]{64}$" },
+    "digestSet": {
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "sha256": { "$ref": "#/$defs/hex64" },
+        "gitCommit": { "type": "string", "pattern": "^[0-9a-f]{7,40}$" }
+      },
+      "additionalProperties": { "type": "string" }
+    },
+    "ref": {
+      "type": "object",
+      "required": ["uri", "digest"],
+      "properties": { "uri": { "type": "string" }, "digest": { "$ref": "#/$defs/digestSet" } }
+    },
+    "versioned": {
+      "type": "object",
+      "required": ["name", "version", "digest"],
+      "properties": { "name": { "type": "string" }, "version": { "type": "string" }, "digest": { "$ref": "#/$defs/digestSet" } }
+    },
+    "envelope": {
+      "title": "DSSE envelope",
+      "type": "object",
+      "required": ["payloadType", "payload", "signatures"],
+      "properties": {
+        "payloadType": { "type": "string" },
+        "payload": { "type": "string", "description": "base64 of the RFC 8785 canonical body" },
+        "signatures": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "object", "required": ["keyid", "sig"], "properties": { "keyid": { "type": "string" }, "sig": { "type": "string" } } }
+        }
+      }
+    },
+    "receiptBody": {
+      "title": "VSLA receipt body (payloadType application/vnd.vsla.receipt+json), signed by a platform: key",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["vslaVersion", "statementDigest", "channel", "receivedAt", "reexecution"],
+      "properties": {
+        "vslaVersion": { "const": "1.0" },
+        "statementDigest": { "$ref": "#/$defs/hex64" },
+        "channel": { "type": "string", "format": "uri" },
+        "receivedAt": { "type": "string", "format": "date-time" },
+        "reexecution": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": { "enum": ["matched", "mismatched", "environment-error", "timeout", "not-attempted"] },
+            "revision": { "type": "string" },
+            "command": { "type": "string" },
+            "commandDigest": { "$ref": "#/$defs/digestSet" },
+            "testDigest": { "$ref": "#/$defs/digestSet" },
+            "sandbox": { "type": "object", "required": ["backend", "isolation"], "properties": { "backend": { "type": "string" }, "isolation": { "enum": ["vm", "container", "process"] }, "digest": { "$ref": "#/$defs/digestSet" } } },
+            "attempts": { "type": "integer", "minimum": 1 },
+            "observedExit": { "type": "integer" },
+            "securityFailure": { "type": "boolean", "description": "the platform's own classifier, not the finder's flag" },
+            "touchedSubject": { "type": "boolean", "description": "the re-executed test imported or covered the package the platform's own configuration names (never a name the finder wrote); rejects a test that never loads the subject, proves nothing about the path it exercised" },
+            "touchedSubjectMeans": { "enum": ["imported", "covered"], "description": "how touchedSubject was decided" },
+            "outputDigest": { "$ref": "#/$defs/digestSet" },
+            "applied": { "type": "boolean" },
+            "reproductionPasses": { "type": "boolean" },
+            "suitePasses": { "type": "boolean" },
+            "scope": { "enum": ["source-only", "mixed"], "description": "computed by the platform from the diff, not copied from the statement" },
+            "review": {
+              "type": "object",
+              "required": ["approved", "distinctFamily", "verdictDigest"],
+              "properties": {
+                "approved": { "type": "boolean" },
+                "reviewerFamily": { "type": "string" },
+                "distinctFamily": { "type": "boolean", "description": "the platform's reviewer is a different model family from every patcher in the MBOM (VSLA-P-10)" },
+                "verdictDigest": { "$ref": "#/$defs/digestSet" }
+              }
+            }
+          }
+        },
+        "anchor": {
+          "description": "the receipt's anchor (VSLA-P-16), one of two forms. `log-inclusion`: the canonical anchor-less receipt body is a leaf of an RFC 6962 log; the anchor carries the log's checkpoint {log, treeSize, rootHash, integratedTime} signed by the pinned log:<name> key with payload type application/vnd.vsla.log-checkpoint+json, and the inclusion proof for the leaf. `signed-timestamp`: the pinned log key signs {log, entryId, integratedTime, receipt: sha256 of the anchor-less body} with payload type application/vnd.vsla.receipt-timestamp+json; it proves existence by a time on that key's word, not append-only-ness, and a verifier requiring an anchor accepts it only by explicit policy",
+          "type": "object",
+          "required": ["form", "log", "integratedTime"],
+          "properties": { "form": { "enum": ["log-inclusion", "signed-timestamp"] }, "log": { "type": "string" }, "integratedTime": { "type": "string", "format": "date-time" },
+                          "treeSize": { "type": "integer", "minimum": 1 }, "rootHash": { "$ref": "#/$defs/hex64" }, "leafIndex": { "type": "integer", "minimum": 0 },
+                          "inclusionProof": { "type": "array", "items": { "type": "array", "prefixItems": [ { "enum": ["L", "R"] }, { "$ref": "#/$defs/hex64" } ], "minItems": 2, "maxItems": 2 } },
+                          "checkpointSignature": { "type": "string", "description": "base64 Ed25519 by the pinned log key over the canonical checkpoint (log-inclusion form)" },
+                          "entryId": { "type": "string" }, "receipt": { "$ref": "#/$defs/digestSet" }, "signature": { "type": "string", "description": "base64 Ed25519 by the pinned log key (signed-timestamp form)" } }
+        }
+      }
+    },
+    "ledgerEntryBody": {
+      "title": "VSLA ledger entry body (payloadType application/vnd.vsla.ledger-entry+json); for an outcome, signatures[0].keyid is the countersigner; a successor carries the old and the new key's signatures; a revoke is signed under the operator keyid it names. No entry carries an index: the finder's operator owns the ledger's order",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "at", "finder"],
+      "properties": {
+        "kind": { "enum": ["outcome", "successor", "revoke"] },
+        "at": { "type": "string", "format": "date-time" },
+        "finder": { "$ref": "#/$defs/ed25519" },
+        "statement": { "$ref": "#/$defs/digestSet" },
+        "platform": { "type": "string" },
+        "track": { "enum": ["finding", "patch"] },
+        "outcome": { "enum": ["accepted", "duplicate", "rejected", "false-positive", "reproduced-unresolved", "withdrawn", "non-authoritative-release", "retracted", "ledger-fork"] },
+        "reason": { "type": "string", "maxLength": 500, "description": "required on every negative or disqualifying outcome" },
+        "claimed": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "verified": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "vouched": { "const": true, "description": "a maintainer vouches for a new finder: counts toward n and m, not toward accepted" },
+        "successor": { "$ref": "#/$defs/ed25519", "description": "kind=successor: the new finder key; signed by old and new keys" },
+        "revokedBy": { "type": "string", "description": "kind=revoke: operator keyid that revoked this finder key" }
+      }
+    },
+    "weightsAttestationBody": {
+      "title": "Provider-signed weight attestation body (payloadType application/vnd.vsla.weights-attestation+json), signed by a provider: key",
+      "type": "object",
+      "required": ["model", "weights", "issuedAt"],
+      "properties": {
+        "model": { "type": "string" },
+        "weights": { "$ref": "#/$defs/digestSet" },
+        "quantization": { "type": "string" },
+        "issuedAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}

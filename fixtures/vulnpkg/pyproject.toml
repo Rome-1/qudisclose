@@ -1,0 +1,8 @@
+[project]
+name = "vulnpkg"
+version = "1.4.2"
+description = "Demo package with a path traversal bug used by the qudisclose demo"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
