@@ -7,9 +7,9 @@ import json
 import uuid
 from datetime import UTC, datetime, timedelta
 from enum import StrEnum
-from typing import Any
+from typing import Annotated, Any
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_validator
 
 
 def now() -> datetime:
@@ -206,6 +206,8 @@ class PatchResult(Strict):
     suite_passes: bool
     attempts: int
     output_excerpt: str = Field(max_length=4000)
+    files: dict[str, Annotated[str, StringConstraints(strip_whitespace=False)] | None] = Field(
+        default_factory=dict, description="what ships: each touched file as the base revision plus the reviewed diff; None = deleted")
 
 
 class ReviewVerdict(Strict):

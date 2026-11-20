@@ -371,18 +371,15 @@ class Orchestrator:
                 return PatchResult(proposal=proposal, reproduction_passes=False, suite_passes=False, attempts=attempt,
                                    output_excerpt=("empty diff" if applied is None else f"diff did not apply:\n{applied.excerpt()}")[-4000:])
             clean.write(repro.test_path, repro.test_source)  # after apply: the diff may legitimately not include the test
+            touched = sorted(set(proposal.files_touched) | set(diff_paths(proposal.diff)))
+            files = _read_files(clean, touched)   # what ships: read before any code under test runs
             r1 = clean.run(shlex.split(repro.command))
             r2 = clean.run(shlex.split(repo_cfg.test_command))
-            files = {}
-            for path in proposal.files_touched:
-                try:
-                    files[path] = clean.read(path)
-                except Exception:
-                    pass
-            res = PatchResult(proposal=proposal, reproduction_passes=r1.ok, suite_passes=r2.ok, attempts=attempt,
-                              output_excerpt=(f"[reproduction] {r1.excerpt(1500)}\n[suite] {r2.excerpt(2000)}")[-4000:])
-            object.__setattr__(res, "_files", files)
-            return res
+            if _read_files(clean, touched) != files:
+                return PatchResult(proposal=proposal, reproduction_passes=False, suite_passes=False, attempts=attempt,
+                                   output_excerpt="running the tests changed the patched files, so what would ship is not the diff that was reviewed")
+            return PatchResult(proposal=proposal, reproduction_passes=r1.ok, suite_passes=r2.ok, attempts=attempt, files=files,
+                               output_excerpt=(f"[reproduction] {r1.excerpt(1500)}\n[suite] {r2.excerpt(2000)}")[-4000:])
         finally:
             clean.destroy()
 
@@ -933,3 +930,14 @@ class Orchestrator:
             if m:
                 return m.group(1)
         return "0.0.0"
+
+
+def _read_files(sandbox: SandboxBackend, paths: list[str]) -> dict[str, str | None]:
+    """Current contents of `paths` in the sandbox, None for a path that no longer exists (a deletion)."""
+    files: dict[str, str | None] = {}
+    for path in paths:
+        try:
+            files[path] = sandbox.read(path)
+        except FileNotFoundError:
+            files[path] = None
+    return files

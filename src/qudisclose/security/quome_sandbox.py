@@ -40,6 +40,7 @@ _SEED_EXCLUDE = {".git", ".venv", "venv", "__pycache__", ".qudisclose-sandboxes"
 # inlined in a single command. Headroom below 10_000 covers the `cd <workdir> && (...)` wrapper and
 # the `printf %s '<chunk>' >> '<path>'` scaffolding `_put_b64` adds around each chunk.
 _EXEC_CHUNK = 8_000
+_OUTPUT_CAP = 200_000
 
 
 def _build_client(cfg: SandboxConfig) -> Any:
@@ -139,8 +140,8 @@ class QuomeSandbox:
         except SandboxNotRunningError as exc:
             return SandboxResult(returncode=-1, stdout="", stderr=f"sandbox not running: {exc}")
         code = res.exit_code if res.exit_code is not None else -1
-        return SandboxResult(returncode=code, stdout=(res.stdout or "")[-200_000:],
-                             stderr=(res.stderr or "")[-200_000:], timed_out=(code == 124))
+        return SandboxResult(returncode=code, stdout=(res.stdout or "")[-_OUTPUT_CAP:],
+                             stderr=(res.stderr or "")[-_OUTPUT_CAP:], timed_out=(code == 124))
 
     def _put_b64(self, b64: str, dest: str) -> SandboxResult:
         """Write a base64 string to `dest` (a path in the sandbox) over exec, in `_EXEC_CHUNK`-sized
@@ -167,6 +168,8 @@ class QuomeSandbox:
         r = self._sh(f"cat {shlex.quote(path)}")
         if r.returncode != 0:
             raise FileNotFoundError(rel)
+        if len(r.stdout) >= _OUTPUT_CAP:   # _sh keeps only the tail; a partial file must never pass for the whole one
+            raise ValueError(f"{rel} is too large to read through the exec channel ({_OUTPUT_CAP} chars)")
         return r.stdout
 
     def write(self, rel: str, content: str) -> None:

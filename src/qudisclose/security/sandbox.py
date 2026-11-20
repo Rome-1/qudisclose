@@ -187,7 +187,7 @@ class LocalSandbox:
         return p
 
     def read(self, rel: str) -> str:
-        return self._confine(rel).read_text()
+        return self._confine(rel).read_bytes().decode()   # no newline translation: a CRLF file ships as CRLF
 
     def write(self, rel: str, content: str) -> None:
         p = self._confine(rel)

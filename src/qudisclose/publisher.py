@@ -46,11 +46,12 @@ class LocalPublisher:
 class GitHubPublisher:
     """Creates a branch + PR and a repository security advisory. Each step uses its own lease."""
 
-    def __init__(self, broker: CredentialBroker, api: str = "https://api.github.com") -> None:
-        self.broker, self.api = broker, api
+    def __init__(self, broker: CredentialBroker, api: str = "https://api.github.com",
+                 transport: httpx2.BaseTransport | None = None) -> None:
+        self.broker, self.api, self.transport = broker, api, transport
 
     def _client(self, token: str) -> httpx2.Client:
-        return httpx2.Client(base_url=self.api, timeout=30, headers={
+        return httpx2.Client(base_url=self.api, timeout=30, transport=self.transport, headers={
             "Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28"})
 
     def publish(self, report: Report, plan: ReleasePlan, patch: PatchResult, *, holder: str,
@@ -87,12 +88,16 @@ class GitHubPublisher:
             branch = f"qudisclose/fix-{plan.advisory.id.lower()}"
             c.post(f"/repos/{repo}/git/refs", json={"ref": f"refs/heads/{branch}", "sha": head_sha}).raise_for_status()
             # Apply the diff file-by-file through the contents API.
-            for path, content in _materialize(patch).items():
+            for path, content in patch.files.items():
                 existing = c.get(f"/repos/{repo}/contents/{path}", params={"ref": branch})
-                body: dict[str, Any] = {"message": f"security: {plan.pr_title}", "content": _b64(content), "branch": branch}
+                body: dict[str, Any] = {"message": f"security: {plan.pr_title}", "branch": branch}
                 if existing.status_code == 200:
                     body["sha"] = existing.json()["sha"]
-                c.put(f"/repos/{repo}/contents/{path}", json=body).raise_for_status()
+                if content is None:
+                    if "sha" in body:
+                        c.request("DELETE", f"/repos/{repo}/contents/{path}", json=body).raise_for_status()
+                    continue
+                c.put(f"/repos/{repo}/contents/{path}", json={**body, "content": _b64(content)}).raise_for_status()
             pr = c.post(f"/repos/{repo}/pulls", json={"title": plan.pr_title, "body": plan.pr_body, "head": branch, "base": base})
             pr.raise_for_status()
             return pr.json()["html_url"]
@@ -124,8 +129,3 @@ def _osv(plan: ReleasePlan) -> dict[str, Any]:
 def _b64(s: str) -> str:
     import base64
     return base64.b64encode(s.encode()).decode()
-
-
-def _materialize(patch: PatchResult) -> dict[str, str]:
-    """Final file contents are attached by the orchestrator after verification (see Orchestrator._verify_patch)."""
-    return getattr(patch, "_files", {})  # type: ignore[no-any-return]

@@ -188,3 +188,98 @@ def test_qudisclose_never_merges():
     from qudisclose import publisher
 
     assert "/merge" not in inspect.getsource(publisher), "publisher must never auto-merge a PR"
+
+
+class _FakeGitHub:
+    """Just enough of the GitHub REST API for GitHubPublisher: records the files it commits to the fix branch."""
+
+    def __init__(self, existing=()):
+        self.committed: dict[str, str] = {}
+        self.deleted: list[str] = []
+        self.existing = set(existing)
+
+    def __call__(self, request):
+        import base64
+
+        import httpx2
+        path, method = request.url.path, request.method
+        if method == "GET" and path.endswith("/git/ref/heads/main"):
+            return httpx2.Response(200, json={"object": {"sha": "0" * 40}})
+        if method == "GET" and "/contents/" in path:
+            found = path.split("/contents/", 1)[1] in self.existing
+            return httpx2.Response(200, json={"sha": "1" * 40}) if found else httpx2.Response(404, json={})
+        if method == "DELETE" and "/contents/" in path:
+            self.deleted.append(path.split("/contents/", 1)[1])
+            return httpx2.Response(200, json={})
+        if method == "PUT" and "/contents/" in path:
+            self.committed[path.split("/contents/", 1)[1]] = base64.b64decode(json.loads(request.content)["content"]).decode()
+            return httpx2.Response(201, json={})
+        if method == "POST" and path.endswith("/pulls"):
+            return httpx2.Response(201 if self.committed or self.deleted else 422, json={"html_url": "https://github.example/pr/1"})
+        if method == "POST" and path.endswith("/security-advisories"):
+            return httpx2.Response(201, json={"html_url": "https://github.example/advisory/1"})
+        if method == "POST" and path.endswith("/git/refs"):
+            return httpx2.Response(201, json={})
+        if method == "GET":
+            return httpx2.Response(200, json={"default_branch": "main"})
+        return httpx2.Response(404, json={})
+
+
+def _github_orchestrator(env):
+    import httpx2
+
+    from qudisclose.publisher import GitHubPublisher
+    from qudisclose.security.broker import CredentialBroker
+    cfg, store, audit, provider, orch = env
+    gh = _FakeGitHub()
+    orch.publisher = GitHubPublisher(CredentialBroker(lambda purpose, repo: "token"), transport=httpx2.MockTransport(gh))
+    return gh
+
+
+def test_github_pr_carries_the_verified_patch(env):
+    """The files committed to the PR branch are the fixture plus the reviewed diff. They used to ride on a private attribute
+    that the store round trip dropped, so the branch had no commits and the PR could not open."""
+    from qudisclose.demo import FIXED_FILES
+    cfg, store, audit, provider, orch = env
+    gh = _github_orchestrator(env)
+    rep, _ = orch.intake(new_report(), actor="agent:researcher-1")
+    r = orch.run_case(rep.id)
+    assert r.status == Status.CLOSED, [e.kind for e in store.events(rep.id)]
+    assert gh.committed == {"vulnpkg/files.py": FIXED_FILES}
+
+
+def test_a_patch_that_rewrites_itself_under_test_never_ships(env):
+    """What ships must be the diff the reviewer saw. Code that edits a patched file while the tests run would otherwise put
+    unreviewed bytes in the PR."""
+    from qudisclose.demo import FIXED_FILES
+    cfg, store, audit, provider, orch = env
+    gh = _github_orchestrator(env)
+    rewrite = FIXED_FILES + "\nimport pathlib as _p\n_p.Path(__file__).write_text(_p.Path(__file__).read_text() + '\\n# unreviewed\\n')\n"
+
+    def patcher(user, tools):
+        tools["write_file"]("vulnpkg/files.py", rewrite)
+        return dict(summary="fix", diff=tools["current_diff"](), files_touched=["vulnpkg/files.py"], risk_notes="")
+    provider.scripts["patcher"] = patcher
+    rep, _ = orch.intake(new_report(), actor="agent:researcher-1")
+    r = orch.run_case(rep.id)
+    assert r.status == Status.FAILED and gh.committed == {}
+    retries = [u for role, u in provider.calls if role == "patcher"][1:]
+    assert retries and all("changed the patched files" in u for u in retries)
+
+
+def test_github_pr_carries_deletions_and_line_endings():
+    """A patch that deletes a file must delete it on the branch, and a CRLF file must not come back as LF."""
+    from types import SimpleNamespace
+
+    import httpx2
+
+    from qudisclose.models import PatchResult
+    from qudisclose.publisher import GitHubPublisher
+    from qudisclose.security.broker import CredentialBroker
+    gh = _FakeGitHub(existing={"legacy.py"})
+    pub = GitHubPublisher(CredentialBroker(lambda purpose, repo: "token"), transport=httpx2.MockTransport(gh))
+    patch = PatchResult(proposal=PatchProposal(summary="s", diff="d", files_touched=[], risk_notes=""), reproduction_passes=True,
+                        suite_passes=True, attempts=1, output_excerpt="", files={"legacy.py": None, "win.txt": "a\r\nb\r\n"})
+    plan = SimpleNamespace(pr_title="t", pr_body="b", advisory=SimpleNamespace(id="QUD-1"))
+    pub._open_pr("example/vulnpkg", plan, PatchResult.model_validate(json.loads(patch.model_dump_json())), "token")
+    assert gh.deleted == ["legacy.py"] and gh.committed == {"win.txt": "a\r\nb\r\n"}
