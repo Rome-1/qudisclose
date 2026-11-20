@@ -179,10 +179,9 @@ POSTMORTEM
 audit chain: OK (8 entries)
 ```
 
-Then `uv run pytest -q` runs the suite (a few tests skip when what they need is absent: a reachable Postgres, the
-`hunter` extra, macOS, or a [vsla](https://github.com/AAI-Society/vsla) checkout), including the paths you hope never
-to see: a patch that fails verification three times, a reviewer that rejects and sends the patcher back, a human
-pausing mid-triage, a report that tries to prompt-inject the agents.
+Then `uv run pytest -q` runs the suite (91 tests; the Postgres parity test skips when no local Postgres is reachable), including the paths you hope never to see: a patch that fails
+verification three times, a reviewer that rejects and sends the patcher back, a human pausing mid-triage, a
+report that tries to prompt-inject the agents.
 
 ## Tutorials
 
