@@ -21,7 +21,6 @@
   <img alt="NSA CSI MCP" src="https://img.shields.io/badge/NSA%20CSI%20MCP-controls%20as%20code-ff9a56?style=flat-square">
   <img alt="Store" src="https://img.shields.io/badge/store-PostgreSQL-336791?style=flat-square">
   <img alt="VSLA" src="https://img.shields.io/badge/VSLA-finding%20%2B%20patch%20tracks-a45cf0?style=flat-square">
-  <img alt="Tests" src="https://img.shields.io/badge/tests-91%20passing-1fb6a6?style=flat-square">
   <img alt="License" src="https://img.shields.io/badge/license-Apache%202.0-15161d?style=flat-square">
 </p>
 
@@ -62,7 +61,7 @@ flowchart LR
     O --> P[reproduce → patch]
     T & P --> V[verify in clean worktree]
     V --> W[adversarial review]
-    W --> L[release: PR + advisory + CVE]
+    W --> L[release: PR + advisory + CVE request]
     L --> M[postmortem]
     L -. OSV / webhook .-> D([downstream teams' intakes])
 ```
@@ -180,9 +179,10 @@ POSTMORTEM
 audit chain: OK (8 entries)
 ```
 
-Then `uv run pytest -q` runs the suite (91 tests; the Postgres parity test skips when no local Postgres is reachable), including the paths you hope never to see: a patch that fails
-verification three times, a reviewer that rejects and sends the patcher back, a human pausing mid-triage, a
-report that tries to prompt-inject the agents.
+Then `uv run pytest -q` runs the suite (a few tests skip when what they need is absent: a reachable Postgres, the
+`hunter` extra, macOS, or a [vsla](https://github.com/AAI-Society/vsla) checkout), including the paths you hope never
+to see: a patch that fails verification three times, a reviewer that rejects and sends the patcher back, a human
+pausing mid-triage, a report that tries to prompt-inject the agents.
 
 ## Tutorials
 
